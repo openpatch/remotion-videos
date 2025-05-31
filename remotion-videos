@@ -1,0 +1,25 @@
+#!/bin/bash
+set -e
+P=~/Sources/openpatch/remotion-shorts
+echo $1
+cp "$1" "$P/public/video.mkv"
+pushd $P
+compositionOptions=("ShortVideo" "LongVideo")
+composition=$(printf "%s\n" "${compositionOptions[@]}" | fzf --prompt="Wähle eine Komposition: ")
+
+# select style
+styles=("mathematik" "informatik" "openpatch")
+style=$(printf "%s\n" "${styles[@]}" | fzf --prompt="Wähle einen Stil: ")
+title=$(basename "${1%.mkv}")
+props=$(jq -n --arg title "$title" --arg style "$style" '{title: $title, style: $style}')
+
+if [ $composition == "ShortVideo" ]; then
+  node sub.mjs public/video.mkv
+  npx remotion render --props="$props" $composition
+  popd
+  mv "$P/out/ShortVideo.mp4" "${1%.mkv}_short.mp4"
+else
+  npx remotion render --props="$props" $composition
+  popd
+  mv "$P/out/LongVideo.mp4" "${1%.mkv}_long.mp4"
+fi
