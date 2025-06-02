@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e
-P=~/Sources/openpatch/remotion-shorts
+P=~/Sources/openpatch/remotion-videos
 echo $1
 cp "$1" "$P/public/video.mkv"
+rm -f "$P/public/video.json"
 pushd $P
 compositionOptions=("ShortVideo" "LongVideo")
 composition=$(printf "%s\n" "${compositionOptions[@]}" | fzf --prompt="Wähle eine Komposition: ")
@@ -10,7 +11,12 @@ composition=$(printf "%s\n" "${compositionOptions[@]}" | fzf --prompt="Wähle ei
 # select style
 styles=("mathematik" "informatik" "openpatch")
 style=$(printf "%s\n" "${styles[@]}" | fzf --prompt="Wähle einen Stil: ")
-title=$(basename "${1%.mkv}")
+file_title=$(basename "${1%.mkv}")
+# ask for a title or use the default if empty
+read -p "Gib einen Titel ein (Standard: $file_title): " title
+if [ -z "$title" ]; then
+  title=$file_title
+fi
 props=$(jq -n --arg title "$title" --arg style "$style" '{title: $title, style: $style}')
 
 if [ $composition == "ShortVideo" ]; then
