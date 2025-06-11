@@ -23,9 +23,9 @@ if [ $composition == "ShortVideo" ]; then
   node sub.mjs public/video.mkv
   npx remotion render --props="$props" $composition
   popd
-  mv "$P/out/ShortVideo.mp4" "${1%.mkv}_short.mp4"
+  mv "$P/out/ShortVideo.mp4" "${title}_short.mp4"
 else
   npx remotion render --props="$props" $composition
   popd
-  mv "$P/out/LongVideo.mp4" "${1%.mkv}_long.mp4"
+  mv "$P/out/LongVideo.mp4" "${title}_long.mp4"
 fi

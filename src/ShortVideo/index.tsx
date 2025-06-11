@@ -58,7 +58,7 @@ const getFileExists = (file: string) => {
 // Try out:
 // - 1500 to display a lot of words at a time
 // - 200 to only display 1 word at a time
-const SWITCH_CAPTIONS_EVERY_MS = 1200;
+const SWITCH_CAPTIONS_EVERY_MS = 1000;
 
 export const ShortVideo: React.FC<{
   src: string;
@@ -126,9 +126,11 @@ export const ShortVideo: React.FC<{
           </AbsoluteFill>
           {pages.map((page, index) => {
             const nextPage = pages[index + 1] ?? null;
-            const subtitleStartFrame = (page.startMs / 1000) * fps;
+            const nextStartMs = nextPage?.startMs + 1000;
+            const startMs = page.startMs + 1000;
+            const subtitleStartFrame = (startMs / 1000) * fps;
             const subtitleEndFrame = Math.min(
-              nextPage ? (nextPage.startMs / 1000) * fps : Infinity,
+              nextPage ? (nextStartMs / 1000) * fps : Infinity,
               subtitleStartFrame + SWITCH_CAPTIONS_EVERY_MS,
             );
             const durationInFrames = subtitleEndFrame - subtitleStartFrame;
